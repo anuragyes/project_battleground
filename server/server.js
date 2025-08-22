@@ -15,19 +15,22 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({ origin: "http://localhost:5173", credentials: true })); // frontend URL
+// // Middleware
+// app.use(cors({ origin: "http://localhost:5173", credentials: true })); // frontend URL
+
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Clerk middleware
-app.use(
-  clerkMiddleware({
-    publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
-    secretKey: process.env.CLERK_SECRET_KEY,
-  })
-);
+// app.use(
+//   clerkMiddleware({
+//     publishableKey: process.env.CLERK_PUBLISHABLE_KEY,
+//     secretKey: process.env.CLERK_SECRET_KEY,
+//   })
+// );
 
+    app.use(clerkMiddleware());
 // Root route
 app.get("/", (req, res) => {
   res.send("🚀 Express server is running with Clerk + Neon DB!");
