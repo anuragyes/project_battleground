@@ -1,0 +1,27 @@
+@import "tailwindcss";
+
+
+.firewave-text {
+  @apply font-bold;
+  background: linear-gradient(
+    90deg,
+    #ff7c00,
+    #ff0000,
+    #ff7c00,
+    #ffff00,
+    #ff7c00
+  );
+  background-size: 300%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: wave 2s linear infinite;
+}
+
+@keyframes wave {
+  0% {
+    background-position: 0%;
+  }
+  100% {
+    background-position: 300%;
+  }
+}
