@@ -23,16 +23,10 @@ const App = () => {
   useEffect(() => {
     // Using async function inside useEffect
     const fetchToken = async () => {
-      try {
-        const token = await getToken();
-        console.log("Token:", token);
 
-        // You can use the token for API calls here
-        // axios.get(`${API_URL}/api/some-endpoint`, { headers: { Authorization: `Bearer ${token}` } })
+      const token = await getToken();
+      console.log("Token:", token);
 
-      } catch (err) {
-        console.error("Error getting token:", err);
-      }
     };
 
     fetchToken();

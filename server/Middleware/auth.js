@@ -5,8 +5,6 @@ export const auth = async (req, res, next) => {
     try {
         // Assuming `req.auth()` returns an object with userId and a `has` function
         const { userId } = await req.auth();
-
-
         // Get user data from Clerk
         const user = await clerkClient.users.getUser(userId);
 

@@ -1,91 +1,80 @@
 
 
-// import { Buffer } from 'buffer'; // If not globally available
+import { Buffer } from 'buffer'; // If not globally available
 import dotenv from 'dotenv';
 dotenv.config();
 
 import OpenAI from "openai";
 import axios from 'axios';
-// import FormData from 'form-data';
+import FormData from 'form-data';
 
 import sql from "../config/db.js";
 // import fs from 'fs';
 // import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { clerkClient } from "@clerk/express";
 
-// import { v2 as cloudinary } from 'cloudinary'
+import { v2 as cloudinary } from 'cloudinary'
 
 const AI = new OpenAI({
-    apiKey: process.env.GOOGLE_GEMINI_KEY,
-    baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
+  apiKey: process.env.GOOGLE_GEMINI_KEY,
+  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/",
 });
 
 export const generateGoogle = async (req, res) => {
-    try {
+  try {
 
 
-        const { prompt  } = req.body;
+    const { prompt } = req.body;
 
-        // Validate input data: Ensure prompt and length are provided
-        if (!prompt ) {
-           
-            return res.status(400).json({ success: false, message: "Missing required fields: prompt and length" });
-        }
+    // Validate input data: Ensure prompt and length are provided
+    if (!prompt) {
 
-
-
-        // // Validate and convert length to token count
-        // let tokenLength;
-        // if (length === 'short') {
-        //     tokenLength = 200; // short corresponds to 200 tokens
-        // } else if (length === 'long') {
-        //     tokenLength = 400; // long corresponds to 400 tokens
-        // } else {
-        //     return res.status(400).json({ success: false, message: "Invalid length value. Valid values are 'short' or 'long'." });
-        // }
-
-        // Your logic for handling the AI request and database insertion
-        const { userId } = req.auth(); // Get the user ID from Clerk authentication
-
-
-        if (!userId) {
-           
-            return res.status(400).json({ success: false, message: "User ID not found" });
-        };
-
-
-
-        // Make the request to the AI API (Google Gemini)
-        const response = await AI.chat.completions.create({
-            model: "gemini-2.0-flash",
-            messages: [{ role: "user", content: prompt }],
-            temperature: 0.7,
-
-        });
-
-        const content = response.choices[0]?.message?.content; // Safe access to content
-
-
-          console.log(content)
-
-        if (!content) {
-
-            return res.status(500).json({ success: false, message: "Failed to generate content from AI" });
-        }
-
-
-
-        // Insert the generated content into the database
-        await sql`INSERT INTO student(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${content}, 'article')`;
-
-
-        // Send the generated article back to the user
-        res.json({ success: true, content });
-
-    } catch (error) {
-        console.error("Error occurred while generating the article:", error.message);
-        res.status(500).json({ success: false, message: error.message || "Internal server error" });
+      return res.status(400).json({ success: false, message: "Missing required fields: prompt" });
     }
+
+
+    // Your logic for handling the AI request and database insertion
+    const { userId } = req.auth(); // Get the user ID from Clerk authentication
+
+
+    if (!userId) {
+
+      return res.status(400).json({ success: false, message: "User ID not found" });
+    };
+
+
+
+    // Make the request to the AI API (Google Gemini)
+    const response = await AI.chat.completions.create({
+      model: "gemini-2.0-flash",
+      messages: [{ role: "user", content: prompt }],
+      temperature: 0.7,
+
+    });
+
+    const content = response.choices[0]?.message?.content; // Safe access to content
+
+
+    console.log(content)
+
+    if (!content) {
+
+      return res.status(500).json({ success: false, message: "Failed to generate content from AI" });
+    }
+
+
+
+    // Insert the generated content into the database
+    await sql`INSERT INTO student(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${content}, 'article')`;
+
+
+    // Send the generated article back to the user
+    res.json({ success: true, content });
+
+  } catch (error) {
+    console.error("Error occurred while generating the article:", error.message);
+    res.status(500).json({ success: false, message: error.message || "Internal server error" });
+  }
 };
 
 
@@ -93,18 +82,15 @@ export const generateGoogle = async (req, res) => {
 
 
 
-/*
+
 
 export const generateImage = async (req, res) => {
   try {
-    const { userId } = req.auth();
-    const plan = req.plan;
-    const { prompt, publish } = req.body;
 
-    console.log("Prompt:", prompt);
-    console.log("Publish:", publish);
-    console.log("API Key:", process.env.CLIPDROP_API_KEY);
-    console.log("Raw body:", req.body);
+
+    const { prompt } = req.body;
+
+    console.log("this si ", prompt);
 
 
     if (!prompt) {
@@ -112,10 +98,7 @@ export const generateImage = async (req, res) => {
       return res.status(400).json({ success: false, message: "Missing required field: prompt" });
     }
 
-    if (plan !== 'premium') {
-      console.log("This feature is only available for premium subscriptions.");
-      return res.json({ success: false, message: "Upgrade plan to continue." });
-    }
+
 
     const formData = new FormData();
     formData.append('prompt', prompt);
@@ -123,9 +106,9 @@ export const generateImage = async (req, res) => {
     const { data } = await axios.post('https://clipdrop-api.co/text-to-image/v1', formData, {
       headers: {
 
-        'x-api-key':  process.env. CLIPDROP_API_KEY,
+        'x-api-key': process.env.CLIPDROP_API_KEY,
       },
-      
+
       responseType: 'arraybuffer', // receive image data
     });
 
@@ -133,7 +116,8 @@ export const generateImage = async (req, res) => {
 
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
 
-    await sql`INSERT INTO creations(user_id, prompt, content, type, publish) VALUES(${userId}, ${prompt}, ${secure_url}, 'image', ${publish ?? false})`;
+      console.log("this is data conentn",data.content)
+
 
     res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -145,6 +129,7 @@ export const generateImage = async (req, res) => {
 
 
 
+/*
 
 
 

@@ -25,12 +25,14 @@ export default aiRouter;
 */
 
 
- import express from 'express';
-import { generateGoogle } from '../controllers/GoogleApi.js';
+import express from 'express';
+import { generateGoogle, generateImage } from '../controllers/GoogleApi.js';
 
-   const googleroute = express.Router();
+const googleroute = express.Router();
 
 
-   googleroute.post("/generate-googleai",  generateGoogle);
+googleroute.post("/generate-googleai", generateGoogle);
 
-    export default googleroute;
+googleroute.post("/generate-img", generateImage);
+
+export default googleroute;
