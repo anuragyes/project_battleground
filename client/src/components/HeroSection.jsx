@@ -1,11 +1,14 @@
 import React from 'react';
 import SectionFirst from './SectionFirst';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@clerk/clerk-react';
 
 const HeroSection = () => {
   const navigate = useNavigate();
 
- 
+  const { user } = useAuth();
+
+
 
   return (
     <>
@@ -33,7 +36,6 @@ const HeroSection = () => {
 
               <button
                 onClick={() => {
-                  console.log("Button clicked");
                   navigate("/ai");
                 }}
                 className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 md:px-8 py-2.5 md:py-3 rounded-full shadow-lg text-base md:text-lg font-medium hover:scale-105 hover:shadow-emerald-500/30 transition-transform duration-300 relative z-10"
@@ -64,3 +66,5 @@ const HeroSection = () => {
 }
 
 export default HeroSection;
+
+

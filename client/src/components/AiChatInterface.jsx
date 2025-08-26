@@ -107,19 +107,23 @@ const AiChatInterface = () => {
   const handleGenerateImage = async () => {
     if (!inputMessage.trim()) return toast.error("Please enter a prompt.");
     try {
-      const { user } = useAuth();
       setImageLoading(true);
       const token = await getToken();
-      const fullPrompt = `Generate an image of ${inputMessage} in the style of Realistic`;
+
+       
+      const fullPrompt = `Generate an image of ${inputMessage} in the style of real without editing `;
+         
+
+        
+      
       const { data } = await axios.post(
+        // "/api/genterateimg/generate-img",
         "http://localhost:5000/api/genterateimg/generate-img",
         { prompt: fullPrompt },
         { headers: { Authorization: `Bearer ${token}` } }
       );
 
-      if (!user) {
-        toast("Make Sure are you login")
-      }
+    
       if (data.success) {
         const firstModelId = aiModels[0].id;
         setConversations((prev) => ({
@@ -201,31 +205,7 @@ const AiChatInterface = () => {
     }
   };
 
-  // const SpeakingToggle = (msgId, text) => {
-  //   const isCurrentlySpeaking = speakingMessages[msgId] || false;
-
-  //   if (!isCurrentlySpeaking) {
-  //     // Stop any other message that is speaking
-  //     window.speechSynthesis.cancel();
-  //     setSpeakingMessages({});
-
-  //     const utterance = new SpeechSynthesisUtterance(text);
-  //     utterance.lang = "en-US";
-
-  //     utterance.onend = () => {
-  //       setSpeakingMessages((prev) => ({ ...prev, [msgId]: false }));
-  //     };
-
-  //     utteranceRef.current = utterance;
-  //     window.speechSynthesis.speak(utterance);
-
-  //     setSpeakingMessages({ [msgId]: true }); // mark this message as speaking
-  //   } else {
-  //     // Stop this message
-  //     window.speechSynthesis.cancel();
-  //     setSpeakingMessages((prev) => ({ ...prev, [msgId]: false }));
-  //   }
-  // };
+ 
 
 
   //   const isCurrentlySpeaking = speakingMessages[msgId] || false;
