@@ -1,5 +1,5 @@
 import express from 'express';
-import { generateDeepSeek, generateImageDeepSeek} from '../controllers/Deepseek.js';
+import { generateDeepSeek, generateDeepSeekImage, } from '../controllers/Deepseek.js';
 
 
 const Deepseekrouter = express.Router();
@@ -7,6 +7,6 @@ const Deepseekrouter = express.Router();
 
 Deepseekrouter.post("/generate-deepseek", generateDeepSeek);
 
-Deepseekrouter.post("/generateimgdeepseek", generateImageDeepSeek );
+Deepseekrouter.post("/generate_image", generateDeepSeekImage);
 
-export default  Deepseekrouter;
+export default Deepseekrouter;

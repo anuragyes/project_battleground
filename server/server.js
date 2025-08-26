@@ -18,6 +18,7 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 
+
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -46,91 +47,64 @@ app.use("/api/genterateimg", requireAuth(), googleRoute);
 app.use("/api/genteratedeepseekimg", requireAuth(), Deepseekrouter);
 app.use("/api/deepseek", requireAuth(), deepseekRoute);
 app.use("/api/lightup", requireAuth(), lightroute);
-// app.use("/api/chatgpt" ,   requireAuth(),  chatGpt);
+app.use("/api/generate_deep_image", requireAuth(), Deepseekrouter);
 
 // Start server
 app.listen(PORT, () => {
   console.log(`✅ Server started at http://localhost:${PORT}`);
 });
 
-
-
-
-
-
-
-
 /*
 import express from "express";
-import dotenv from "dotenv";
-import cors from "cors";
 import axios from "axios";
-import { v2 as cloudinary } from "cloudinary";
-import { Buffer } from "buffer";
+import dotenv from "dotenv";
+import FormData from "form-data";
+import cors from "cors";
 
 dotenv.config();
 
 const app = express();
-app.use(cors());
 app.use(express.json());
+app.use(cors());
 
-// Configure Cloudinary
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const IMAGINE_API_KEY = process.env.IMAGINE_API_KEY;
 
-
-app.get("/", async (req, res) => {
-  res.send("🚀 Express server is running with Clerk + Neon DB!");
-
-})
-
-// POST /api/generate-image
-app.post("/api/generate-image", async (req, res) => {
+app.post("/generate-image", async (req, res) => {
+  const prompt = req.body.prompt || "A city in space";
 
   try {
-
-
-    const { prompt } = req.body;
-
-
-    console.log("this is the req bosy ", req.body);
-
-    if (!prompt) {
-      console.log("Missing required field: prompt");
-      return res.status(400).json({ success: false, message: "Missing required field: prompt" });
-    }
-
-
-
     const formData = new FormData();
-    formData.append('prompt', prompt);
+    formData.append("prompt", prompt);
+    formData.append("style", "realistic");
+    formData.append("aspect_ratio", "1:1");
 
-    const { data } = await axios.post("https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5", formData, {
-      headers: {
+    const headers = {
+      Authorization: `Bearer ${IMAGINE_API_KEY}`,
+      ...formData.getHeaders(),
+    };
 
-        // 'x-api-key': process.env.HF_API_KEY,
-        'x-api-key': process.env.CLIPDROP_API_KEY
-      },
-
-      responseType: 'arraybuffer', // receive image data
+    const response = await axios({
+      method: "post",
+      url: "https://api.vyro.ai/v2/image/generations",
+      data: formData,
+      headers,
+      responseType: "arraybuffer", // Important for image bytes
     });
-    s
-    const base64Image = `data:image/png;base64,${Buffer.from(data, 'binary').toString('base64')}`;
 
-    const { secure_url } = await cloudinary.uploader.upload(base64Image);
+    // Convert to base64
+    const base64Image = Buffer.from(response.data, "binary").toString("base64");
+    const imageUrl = `data:image/png;base64,${base64Image}`;
 
-
-    res.json({ success: true, content: secure_url });
-  } catch (error) {
-    console.error("Error occurred while generating the image:", error.message);
-    res.status(500).json({ success: false, message: error.message || "Internal server error" });
+    res.json({ success: true, url: imageUrl });
+  } catch (err) {
+    console.error("Error:", err.response?.data || err.message);
+    res.status(500).json({
+      success: false,
+      error: err.response?.data || err.message,
+    });
   }
-
 });
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`✅ Server running at http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
 */

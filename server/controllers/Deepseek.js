@@ -1,6 +1,6 @@
 
-import fs from "fs";
 
+import FormData from "form-data"; // correct Node.js FormData
 import fetch from "node-fetch";
 import axios from "axios";
 dotenv.config();
@@ -9,8 +9,6 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 import sql from "../config/db.js";
-// import fs from 'fs';
-// import pdf from 'pdf-parse/lib/pdf-parse.js';
 import { clerkClient } from "@clerk/express";
 
 import { v2 as cloudinary } from 'cloudinary'
@@ -87,54 +85,94 @@ export const generateDeepSeek = async (req, res) => {
 
 
 
+/*
 
 
 
 
 
 
-export const generateImageDeepSeek = async (req, res) => {
+const IMAGINE_API_KEY = process.env.IMAGINE_API_KEY;
+export const generateDeepSeekImage = async (req, res) => {
   try {
-    const { prompt } = req.body;
-    const { userId } = req.auth();
 
-    // if (!prompt || !userId) {
-    //   return res.status(400).json({ success: false, message: "Missing prompt or userId" });
-    // }
+     const { prompt } = req.body;
+      console.log("this si ", prompt);
+    const formData = new FormData();
+    formData.append("prompt", prompt);
+    formData.append("style", "realistic");
+    formData.append("aspect_ratio", "1:1");
 
-      console.log("this is prompt",prompt)
-
-    // Call Hugging Face
-    const response = await axios.post(
-      "https://api-inference.huggingface.co/models/runwayml/stable-diffusion-v1-5",
-      { inputs: prompt },
-      {
-        headers: {
-          Authorization: `Bearer ${process.env.HF_API_KEY}`,
-        },
-        responseType: "arraybuffer",
-      }
-    );
-
-      console.log("this is an api key ", process.env.HF_API_KEY)
-    const contentType = response.headers["content-type"];
-    if (contentType.includes("application/json")) {
-      const errorMsg = JSON.parse(response.data.toString());
-      throw new Error(errorMsg.error);
+     if (!prompt) {
+      console.log("Missing required field: prompt");
+      return res.status(400).json({ success: false, message: "Missing required field: prompt" });
     }
 
+
+    const headers = {
+      Authorization: `Bearer ${IMAGINE_API_KEY}`,
+      ...formData.getHeaders(),
+    };
+
+    const response = await axios({
+      method: "post",
+      url: "https://api.vyro.ai/v2/image/generations",
+      data: formData,
+      headers,
+      responseType: "arraybuffer", // Important for image bytes
+    });
+
     // Convert to base64
+    const base64Image = Buffer.from(response.data, "binary").toString("base64");
+    const imageUrl = `data:image/png;base64,${base64Image}`;
+
+    res.json({ success: true, url: imageUrl });
+  } catch (err) {
+    console.error("Error:", err.response?.data || err.message);
+    res.status(500).json({
+      success: false,
+      error: err.response?.data || err.message,
+    });
+  }
+});
+*/
+
+
+
+const IMAGINE_API_KEY = process.env.IMAGINE_API_KEY;
+
+export const generateDeepSeekImage = async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!prompt) {
+      return res.status(400).json({ success: false, message: "Prompt is required" });
+    }
+
+    const formData = new FormData();
+    formData.append("prompt", prompt);
+    formData.append("style", "realistic");       // REQUIRED   
+
+    const headers = {
+      Authorization: `Bearer ${IMAGINE_API_KEY}`,
+      ...formData.getHeaders(),
+    };
+
+    // Axios call
+    const response = await axios.post(
+      "https://api.vyro.ai/v2/image/generations",
+      formData,
+      { headers, responseType: "arraybuffer" }  // get raw image bytes
+    );
+
+    // Convert raw bytes to base64 for Cloudinary
     const base64Image = `data:image/png;base64,${Buffer.from(response.data, "binary").toString("base64")}`;
 
-    // Optional: upload to Cloudinary
-    const { secure_url } = await cloudinary.uploader.upload(base64Image);
+    // Upload to Cloudinary
+    const uploadResult = await cloudinary.uploader.upload(base64Image);
 
-    // Optional: insert into DB
-    // await sql`INSERT INTO student(user_id, prompt, content, type) VALUES(${userId}, ${prompt}, ${secure_url}, 'image')`;
-
-    res.json({ success: true, content: secure_url });
+    res.json({ success: true, url: uploadResult.secure_url });
   } catch (error) {
-    console.error("Error generating image:", error.message);
-    res.status(500).json({ success: false, message: error.message });
+    console.error("Error:", error.response?.data || error.message);
+    res.status(500).json({ success: false, message: error.response?.data?.message || error.message });
   }
 };

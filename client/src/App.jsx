@@ -56,3 +56,56 @@ const App = () => {
 
 export default App;
 
+
+
+
+
+
+
+
+
+// import React, { useState } from "react";
+// import axios from "axios";
+
+// export default function App() {
+//   const [prompt, setPrompt] = useState("");
+//   const [imageUrl, setImageUrl] = useState("");
+//   const [loading, setLoading] = useState(false);
+
+//   const handleGenerate = async () => {
+//     if (!prompt) return;
+//     setLoading(true);
+//     try {
+//       const { data } = await axios.post("http://localhost:5000/generate-image", { prompt });
+//       if (data.success) {
+//         setImageUrl(data.url);
+//       }
+//     } catch (err) {
+//       console.error(err);
+//       alert("Error generating image");
+//     } finally {
+//       setLoading(false);
+//     }
+//   };
+
+//   return (
+//     <div style={{ padding: 20 }}>
+//       <h1>Text-to-Image Generator</h1>
+//       <input
+//         type="text"
+//         value={prompt}
+//         onChange={(e) => setPrompt(e.target.value)}
+//         placeholder="Enter prompt"
+//         style={{ width: 300, marginRight: 10 }}
+//       />
+//       <button onClick={handleGenerate} disabled={loading}>
+//         {loading ? "Generating..." : "Generate"}
+//       </button>
+//       {imageUrl && (
+//         <div style={{ marginTop: 20 }}>
+//           <img src={imageUrl} alt="Generated" style={{ maxWidth: "100%" }} />
+//         </div>
+//       )}
+//     </div>
+//   );
+// }
