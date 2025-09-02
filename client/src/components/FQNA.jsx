@@ -37,62 +37,71 @@ const FQNA = () => {
   ];
 
   return (
-   <>
-   
-   
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-20 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-3xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
-            <span className="bg-gradient-to-r from-red-500 to-yellow-500 bg-clip-text text-transparent">
-              AI Battleground FAQs
-            </span>
-          </h1>
-          <p className="text-lg text-gray-600">
-            Quick answers about your ultimate AI toolkit
-          </p>
-        </div>
+    <>
+      <div className="min-h-screen bg-gradient-to-tr from-purple-200 via-pink-100 to-yellow-100 py-20 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-3xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-10">
+            <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-4">
+              <span className="bg-gradient-to-r from-pink-500 to-purple-500 bg-clip-text text-transparent">
+                AI Battleground FAQs
+              </span>
+            </h1>
+            <p className="text-lg text-gray-700">
+              Quick answers about your ultimate AI toolkit
+            </p>
+          </div>
 
-        {/* Accordion */}
-        {faqs.map((faq, index) => (
-          <Accordion
-            key={index}
-            expanded={expanded === index}
-            onChange={handleChange(index)}
-            sx={{
-              borderRadius: "12px",
-              marginBottom: "12px",
-              boxShadow: expanded === index ? 3 : 1,
-              "&:before": { display: "none" },
-            }}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls={`panel${index}-content`}
-              id={`panel${index}-header`}
+          {/* Accordion */}
+          {faqs.map((faq, index) => (
+            <Accordion
+              key={index}
+              expanded={expanded === index}
+              onChange={handleChange(index)}
               sx={{
-                backgroundColor: expanded === index ? "#fff5f5" : "#fafafa",
                 borderRadius: "12px",
+                marginBottom: "14px",
+                boxShadow: expanded === index ? 5 : 1,
+                "&:before": { display: "none" },
+                transition: "all 0.3s ease",
+                "&:hover": {
+                  transform: "scale(1.02)",
+                  boxShadow: 6,
+                },
               }}
             >
-              <Typography variant="h6">{faq.question}</Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography variant="body1" color="text.secondary">
-                {faq.answer}
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-        ))}
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon sx={{ color: "#7e22ce" }} />}
+                aria-controls={`panel${index}-content`}
+                id={`panel${index}-header`}
+                sx={{
+                  backgroundColor: expanded === index ? "rgba(255, 192, 203, 0.3)" : "rgba(255, 255, 255, 0.6)",
+                  borderRadius: "12px",
+                  "& .MuiTypography-root": {
+                    fontWeight: 600,
+                    color: "#4b0082",
+                  },
+                }}
+              >
+                <Typography variant="h6">{faq.question}</Typography>
+              </AccordionSummary>
+              <AccordionDetails
+                sx={{
+                  backgroundColor: "rgba(255, 255, 255, 0.8)",
+                  borderRadius: "12px",
+                }}
+              >
+                <Typography variant="body1" color="text.secondary">
+                  {faq.answer}
+                </Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </div>
       </div>
-    </div>
 
-
-    <Footer/>
-   
-   
-   </>
+      <Footer />
+    </>
   );
 };
 
