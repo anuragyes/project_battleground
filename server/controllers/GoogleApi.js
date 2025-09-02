@@ -1,12 +1,12 @@
 
-
+import FormData from 'form-data';
 import { Buffer } from 'buffer'; // If not globally available
 import dotenv from 'dotenv';
 dotenv.config();
 
 import OpenAI from "openai";
 import axios from 'axios';
-import FormData from 'form-data';
+
 
 import sql from "../config/db.js";
 // import fs from 'fs';
@@ -24,6 +24,15 @@ export const generateGoogle = async (req, res) => {
   try {
 
 
+    // Your logic for handling the AI request and database insertion
+    const { userId } = req.auth(); // Get the user ID from Clerk authentication
+
+
+    if (!userId) {
+
+      return res.status(400).json({ success: false, message: "User ID not found" });
+    };
+
     const { prompt } = req.body;
 
     // Validate input data: Ensure prompt and length are provided
@@ -33,14 +42,6 @@ export const generateGoogle = async (req, res) => {
     }
 
 
-    // Your logic for handling the AI request and database insertion
-    const { userId } = req.auth(); // Get the user ID from Clerk authentication
-
-
-    if (!userId) {
-
-      return res.status(400).json({ success: false, message: "User ID not found" });
-    };
 
 
 
@@ -55,7 +56,7 @@ export const generateGoogle = async (req, res) => {
     const content = response.choices[0]?.message?.content; // Safe access to content
 
 
-    console.log(content)
+    console.log('This is GoogleContent : ', content)
 
     if (!content) {
 
@@ -84,13 +85,17 @@ export const generateGoogle = async (req, res) => {
 
 
 
+
+
+
 export const generateImage = async (req, res) => {
   try {
 
 
     const { prompt } = req.body;
+    // const prompt  =  "tiger"
 
-    console.log("this si ", prompt);
+    console.log("this is ", prompt);
 
 
     if (!prompt) {
@@ -116,8 +121,7 @@ export const generateImage = async (req, res) => {
 
     const { secure_url } = await cloudinary.uploader.upload(base64Image);
 
-      console.log("this is data conentn",data.content)
-
+    console.log("this is data content in GoogleApi", data.content)
 
     res.json({ success: true, content: secure_url });
   } catch (error) {
@@ -125,10 +129,6 @@ export const generateImage = async (req, res) => {
     res.status(500).json({ success: false, message: error.message || "Internal server error" });
   }
 };
-
-
-
-
 /*
 
 

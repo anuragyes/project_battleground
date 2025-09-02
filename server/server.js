@@ -6,7 +6,6 @@ import cors from "cors";
 import { clerkMiddleware, requireAuth } from "@clerk/express";
 
 import googleRoute from "./routes/Google_api_route.js";
-import deepseekRoute from "./routes/DeepSeekRoutes.js";
 // import chatGpt from "./routes/Chatgpt.js";
 import lightroute from "./routes/Light.js";
 import connectCloudinary from "./config/cloudinary.js";
@@ -44,10 +43,13 @@ app.use("/api/genterateimg", requireAuth(), googleRoute);
 
 
 
-app.use("/api/genteratedeepseekimg", requireAuth(), Deepseekrouter);
-app.use("/api/deepseek", requireAuth(), deepseekRoute);
-app.use("/api/lightup", requireAuth(), lightroute);
+
+app.use("/api/deepseek", requireAuth(), Deepseekrouter);
 app.use("/api/generate_deep_image", requireAuth(), Deepseekrouter);
+
+
+
+app.use("/api/lightup", requireAuth(), lightroute);
 
 // Start server
 app.listen(PORT, () => {

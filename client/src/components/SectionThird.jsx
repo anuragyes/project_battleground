@@ -6,7 +6,6 @@ import AIModelsShowcase from './AIModelsShowcase';
 const SectionThird = () => {
     return (
         <>
-
             <section className="relative pt-32 w-full  h-1/6 flex items-center justify-center  bg-gray-900 text-white overflow-hidden">
 
                 {/* Background grid + stars */}
@@ -14,7 +13,7 @@ const SectionThird = () => {
 
                 {/* Content */}
                 <div className="relative z-10 text-center px-4">
-
+ 
                     {/* Heading */}
                     <motion.h1
                         initial={{ opacity: 0, y: 40 }}

@@ -1,14 +1,22 @@
 import React from 'react';
 import SectionFirst from './SectionFirst';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '@clerk/clerk-react';
+import { useUser } from '@clerk/clerk-react';  // ✅ useUser instead of useAuth
+import toast from 'react-hot-toast';
 
 const HeroSection = () => {
   const navigate = useNavigate();
+  const { isSignedIn, user } = useUser(); // ✅ now you get user + login status
 
-  const { user } = useAuth();
+  const handleGetStarted = () => {
+    if (!isSignedIn) {
+      toast.error("Oops, please login first 🚨");
+      
+    }
 
-
+    toast.success(`Welcome ${user.firstName || "back"} 🎉`);
+    navigate("/ai");
+  };
 
   return (
     <>
@@ -17,7 +25,7 @@ const HeroSection = () => {
           {/* Left Side Content */}
           <div className="flex-1 space-y-6 text-center lg:text-left">
             <div className="inline-block bg-neutral-900 border border-gray-700 text-sm text-emerald-400 px-4 py-1 rounded-full">
-              Built by Team  of SIRT
+              Built by Team of SIRT
             </div>
 
             <h1 className="text-3xl md:text-5xl lg:text-6xl font-bold leading-tight">
@@ -33,17 +41,12 @@ const HeroSection = () => {
             </p>
 
             <div>
-
               <button
-                onClick={() => {
-                  navigate("/ai");
-                }}
+                onClick={handleGetStarted}
                 className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 md:px-8 py-2.5 md:py-3 rounded-full shadow-lg text-base md:text-lg font-medium hover:scale-105 hover:shadow-emerald-500/30 transition-transform duration-300 relative z-10"
               >
                 Get Started Now
               </button>
-
-
             </div>
 
             <p className="text-xs md:text-sm text-gray-500">
@@ -63,8 +66,6 @@ const HeroSection = () => {
       <SectionFirst />
     </>
   );
-}
+};
 
 export default HeroSection;
-
-

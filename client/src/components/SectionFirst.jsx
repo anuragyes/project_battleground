@@ -12,7 +12,7 @@ const SectionFirst = () => {
             One Window. Six Perspectives. <br className="hidden md:block" />
             Achieve Optimal Efficiency.
           </h2>
-
+  
           {/* Subtext */}
           <p className="mt-4 text-gray-400 text-sm md:text-base lg:text-lg">
             Every feature is designed to amplify your AI-powered productivity
