@@ -1,7 +1,5 @@
 
 
-// // AiChatInterface.jsx
-
 import React, { useState, useRef, useEffect } from "react";
 import { FiPlus, FiSend, FiLock } from "react-icons/fi";
 import { IoIosArrowBack, IoIosArrowForward } from "react-icons/io";
@@ -13,6 +11,7 @@ import { FaRobot } from "react-icons/fa";
 import { useAuth, useUser, useClerk } from "@clerk/clerk-react";
 import { useNavigate } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
+
 // ToggleButton component
 const ToggleButton = ({ isOn, onToggle }) => (
   <button
@@ -54,7 +53,7 @@ const AiChatInterface = () => {
 
   const aiModels = [
     { id: "gemini", name: "Gemini Pro", color: "bg-blue-100", textColor: "text-blue-800", endpoint: "/api/googleai/generate-googleai", locked: false },
-     { id: "deepseek", name: "DeepSeek", color: "bg-yellow-100", textColor: "text-yellow-700", endpoint: "/api/deepseek/generate-deepseek", locked: false },
+    { id: "deepseek", name: "DeepSeek", color: "bg-yellow-100", textColor: "text-yellow-700", endpoint: "/api/deepseek/generate-deepseek", locked: false },
     { id: "perplexity", name: "Perplexity.AI", color: "bg-orange-100", textColor: "text-orange-700", locked: true, upgradeMessage: "Upgrade to access Perplexity.AI's advanced capabilities" },
     { id: "grok", name: "Grok", color: "bg-red-100", textColor: "text-red-600", locked: true, upgradeMessage: "Unlock Grok's unique AI with a premium subscription" },
     { id: "claude", name: "Claude", color: "bg-red-100", textColor: "text-red-600", locked: true, upgradeMessage: "Unlock Claude with a premium subscription" },
@@ -122,9 +121,6 @@ const AiChatInterface = () => {
     }
   };
 
- 
-
-
   // Unified handler for both chatboxes
   const handleGenerateMessage = async () => {
     const token = await getToken();
@@ -143,8 +139,7 @@ const AiChatInterface = () => {
           const isImageMode = generateImageEnabled;
           const endpoint = isImageMode
             ? model.id === "gemini"
-              ? 
-              "http://localhost:5000/api/genterateimg/generate-img"
+              ? "http://localhost:5000/api/genterateimg/generate-img"
               : "http://localhost:5000/api/generate_deep_image/generate_image"
             : model.endpoint;
 
@@ -188,8 +183,6 @@ const AiChatInterface = () => {
       setImageLoading(false);
     }
   };
-
-
 
   const handleEnhanceText = async () => {
     if (!inputMessage.trim()) return toast.error("Please type something to enhance");
@@ -243,13 +236,21 @@ const AiChatInterface = () => {
         )}
       </div>
 
-      {/* Chat Area */}
+      {/* Main Chat Area */}
       <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Chat containers with horizontal scrolling */}
         <div className="flex-1 relative">
-          <button onClick={() => scrollContainer("left")} className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full bg-white shadow hover:bg-gray-100 z-10">
+          <button 
+            onClick={() => scrollContainer("left")} 
+            className="absolute left-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full bg-white shadow hover:bg-gray-100 z-10"
+          >
             <IoIosArrowBack size={20} />
           </button>
-          <div ref={messageContainerRef} className="flex overflow-x-auto h-full px-4 py-4 sm:px-6 sm:py-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 space-x-4">
+          
+          <div 
+            ref={messageContainerRef} 
+            className="flex overflow-x-auto h-full px-4 py-4 sm:px-6 sm:py-6 scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-200 space-x-4"
+          >
             {aiModels.map((model) => (
               <div key={model.id} className="flex-shrink-0 w-full sm:w-80 md:w-96 mx-2 bg-white rounded-lg border border-gray-200 shadow flex flex-col relative">
                 {/* Header */}
@@ -261,18 +262,21 @@ const AiChatInterface = () => {
                   </div>
                   {isLoading[model.id] && <div className="w-4 h-4 border-t-2 border-r-2 border-current rounded-full animate-spin"></div>}
                 </div>
+                
                 {lockedModels[model.id] && (
                   <div className="absolute inset-0 bg-white bg-opacity-80 flex flex-col items-center justify-center p-4 z-10 rounded-lg">
                     <Crown className="mx-auto text-yellow-500" size={40} />
                     <h3 className="font-bold text-lg mt-2 text-gray-800">Premium Feature</h3>
                     <p className="text-gray-600 mt-2">{model.upgradeMessage || "Upgrade to unlock this AI model"}</p>
-                    <button  onClick={()=>{
-                      toast.error(" Upgrade Comming Soon ")
-                    }} className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition">
+                    <button 
+                      onClick={() => toast.error(" Upgrade Comming Soon ")} 
+                      className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 transition"
+                    >
                       Upgrade Now
                     </button>
                   </div>
                 )}
+                
                 {/* Chat messages */}
                 <div className="chat-scroll flex-1 overflow-y-auto max-h-[400px] p-3 space-y-3">
                   {(conversations[model.id] || []).map((msg) => (
@@ -305,12 +309,17 @@ const AiChatInterface = () => {
               </div>
             ))}
           </div>
-          <button onClick={() => scrollContainer("right")} className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full bg-white shadow hover:bg-gray-100 z-10">
+          
+          <button 
+            onClick={() => scrollContainer("right")} 
+            className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 rounded-full bg-white shadow hover:bg-gray-100 z-10"
+          >
             <IoIosArrowForward size={20} />
           </button>
         </div>
-        {/* Input area */}
-        <div className="p-4 border-t border-gray-300 bg-white">
+        
+        {/* Fixed Input Area at Bottom */}
+        <div className="bg-white p-4 border-t border-gray-300 sticky bottom-0 left-0 w-full z-20">
           <div className="flex flex-col sm:flex-row items-center bg-gray-100 border border-gray-300 rounded-full px-3 py-2 shadow gap-2">
             <textarea
               value={inputMessage}
@@ -327,7 +336,10 @@ const AiChatInterface = () => {
             />
             <div className="flex gap-2">
               <button onClick={handleEnhanceText} className="p-3 flex items-center justify-center">
-                <Lightbulb size={26} className={`transition-colors ${enhancing ? "text-yellow-400 drop-shadow-[0_0_10px_rgb(250,204,21)]" : "text-gray-500"}`} />
+                <Lightbulb 
+                  size={26} 
+                  className={`transition-colors ${enhancing ? "text-yellow-400 drop-shadow-[0_0_10px_rgb(250,204,21)]" : "text-gray-500"}`} 
+                />
               </button>
               <button
                 onClick={handleGenerateMessage}
@@ -345,7 +357,7 @@ const AiChatInterface = () => {
           </div>
         </div>
       </div>
-    </div >
+    </div>
   );
 };
 
